@@ -1,0 +1,18 @@
+#console{width:50%; height:100%; min-height:100vh; background:rgba(255,255,255,1); box-shadow:0px 0px 3px rgba(0,0,0,0.45); position:fixed; z-index:1000; right:0px; top:0px; opacity:0.95; visibility:visible;}
+#console[count='0']{opacity:0; visibility:hidden;}
+#console.hide{opacity:0; visibility:hidden;}
+/*#console:hover, #console:focus, #console:active{opacity:1;}*/
+	#console > .close{position:absolute; z-index:1002; top:25px; right:25px; background:#4A1378; border-radius:999px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#FFF; font-size:26px; cursor:pointer; border:2px solid #FFF; transition:all .4s;}
+	#console > .close:hover{transform:rotate(360deg);}
+		#console > .close::after, #console > .close::before{width:4px; position:absolute; left:calc(50% - 2px); background:#FFF; transform:rotate(45deg); border-radius:4px; transition:all .4s;}
+		#console > .close::after, #console > .close::before{height:40%; top:30%;}
+		#console > .close:hover::after, #console > .close:hover::before{height:60%; top:20%;}
+		#console > .close::before{transform:rotate(-45deg);}
+
+		/*#console .close > i{font-style:normal; position:relative;}*/
+	#console > .console{width:calc(100%); height:calc(100%); overflow:auto; color:#000; position:relative; z-index:1001; padding:0px;}
+		#console > .console > .line{width:100%;}
+			#console > .console > .line .title{padding:10px 25px; background:#4A1378; color:#FFF; cursor:pointer;}
+			#console > .console > .line > textarea, #console > .console > .line > pre{display:block; width:calc(100%); overflow:auto; padding:25px; background:none; border:none; word-wrap:break-word; word-break:break-all; font-size:12px; resize:none; outline:none;}
+			#console > .console > .line > textarea{background:rgba(0,0,0,0.05);}
+			#console > .console > .line > pre{white-space:pre-wrap;}
