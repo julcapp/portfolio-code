@@ -13,7 +13,7 @@ function p($data, $title = false, $message = ''){
 
 $(function(){
 
-	$('input[name="Телефон"]').mask('+7 (000) 000-00-00');
+	$('input[name="Телефон"]').mask('+7 (999) 999-99-99');
 
 	var $fbut = $('fbut-form');	// Главный блок формы.
 	var $fbut_close = $('fbut-close');	// Кнопки закрытия формы.
@@ -73,8 +73,6 @@ $(function(){
 
 	init_fbut();	// Запускаем отображение формы.
 
-	open_fbut('_main');	// Открываем форму.
-
 	$fbut_close.click(function(){
 		close_fbut();
 	});
@@ -113,32 +111,29 @@ $(function(){
 		}, 5000);
 	}
 
-	$.ajaxSetup({
-		url: '/mail/index.php',
-		type: 'POST',
-		dataType: 'text',
-		beforeSend: function(){
-			load_fbut();
-		},
-		error: function(req, text, error){
-			console.error('Упс! Ошибочка: ' + text + ' | ' + error);
-			console.log('error');
-		},
-		complete: function(){
-			load_fbut();
-			close_fbut();
-		}
-	});
-
 	$('fbut-form  > fbut-wrap > form[ajax]').on('submit', function(e){
 		$('fbut-wrap[view="show"]').view('hide');
 		e.preventDefault();
 		var $that = $(this),
 		formData = new FormData($that.get(0));
 		$.ajax({
+			url: '/mail/index.php',
+			type: 'POST',
+			dataType: 'text',
 			contentType: false,
 			processData: false,
 			data: formData,
+			beforeSend: function(){
+				load_fbut();
+			},
+			error: function(req, text, error){
+				console.error('Упс! Ошибочка: ' + text + ' | ' + error);
+				console.log('error');
+			},
+			complete: function(){
+				load_fbut();
+				close_fbut();
+			},
 			success: function(json){
 				if(json){
 					info_fbut(json);
@@ -150,49 +145,4 @@ $(function(){
 
 	//////////////// ################ АЯКС ФОРМА ################ ////////////////
 	
-
-	var $email = false, $phone = false, $name = false;
-
-	function checkLenght($input){
-		console.log($input.val().length);
-		// Длинная запись выражения
-		// if($input.val.lenght > 0)
-		// 	return true
-		// else
-		// 	return false;
-
-		// Короткая запись выражения
-		return ($input.val().length > 0) ? true : false;
-	}
-
-	// checkLenght($('input#name'));
-
-	$("input#email, input#phone, input#name").change(function(){
-		console.log(123);
-		// Если нажали 
-		$("input#email, input#phone, input#name").each(function(){
-			$id = $(this).attr('id');
-			$bool = checkLenght($(this));
-			switch($id){
-				case 'email':
-					$email = $bool; 
-
-				case 'phone':
-					$phone = $bool; 
-
-				case 'name':
-					$name = $bool; 
-			}
-		});
-
-		// console.log('$email: ' + $email);
-		// console.log('$phone: ' + $phone);
-		// console.log('$name: ' + $name);
-		if($email == true && $phone == true && $name == true){
-			$('button#button').removeAttr('disabled');
-		}else{
-			$('button#button').attr({'disabled':'disabled'});
-		}
-
-	});
 });

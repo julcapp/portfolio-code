@@ -1,6 +1,4 @@
 @import 'https://fonts.googleapis.com/css?family=Exo+2:500,600,700';
-iframe{width:100%; height:100%; border:none; position:fixed; top:0px; left:0px; right:0px; bottom:0px;}
-a[fbut]{display:block; position:fixed; bottom:20px; left:25px; background:var(--main-color); color:#FFF; padding:15px 30px;}
 
 /*
 В мобильниках чекбоксы работают не так как нужно.
@@ -13,7 +11,7 @@ a[fbut]{display:block; position:fixed; bottom:20px; left:25px; background:var(--
 	/* #73AB16* - зеленый */
 	/* #FF5623 - оранжевый */
 	/* var(--main-color) */
-	--main-color:#FF5623; 
+	--main-color:#5f347a; 
 }
 
 @keyframes fButLoadRotate{
@@ -116,6 +114,7 @@ fbut-form[view="show"]{
 		margin:0px;
 		box-sizing:border-box;
 		transition:.3s;
+		-webkit-appearance:none;
 	}
 
 	fbut-form label{
