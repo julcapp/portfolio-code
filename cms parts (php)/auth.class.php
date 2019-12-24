@@ -1,13 +1,13 @@
 <?php
 
 	class auth{
-		var $_id = false;
-		var $_login = '';
-		var $_vk = '';
-		var $_foto = '';
-		var $_auth = false;
-		var $_admin = false;
-		var $db = false;
+		protected $_id = false;
+		public $_login = '';
+		public $_vk = '';
+		public $_foto = '';
+		public $_auth = false;
+		public $_admin = false;
+		protected $db = false;
 
 		function __construct($DB){
 			$this->db = $DB;
@@ -29,7 +29,7 @@
 		}
 
 		private function check_auth(){
-			if(!($_COOKIE['auth'] == 'false'))
+			if(isset($_COOKIE['auth']) && $_COOKIE['auth'] !== 'false')
 				$this->_auth = true;
 		}
 		
@@ -79,6 +79,20 @@
 		private function set_cookie($name, $value = '', $expires = false){
 			$expires = ($expires ? time() + ($expires * 86400) : time() - 3600);
 			setcookie($name, $value, $expires, "/");
+		}
+
+		public function checkDatainUrl(){
+			$url = str_replace('/auth/', '', $_SERVER['REQUEST_URI']);
+			if($_GET['method'] == 'vk')
+				$url = str_replace('vk/', '', $url);
+			return (empty($url) ? false : $url);
+		}
+		
+		public function normalizeDatafromUrl($str, $data = []){
+			foreach(explode('&', $str) as $key => $val){
+				$data[str_replace('?', '', explode('=', $val)[0])] = explode('=', $val)[1];
+			}
+			return $data;
 		}
 	}
 
