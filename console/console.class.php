@@ -1,14 +1,12 @@
 <?php
 
 	class console{
-		var $data = array();
-		var $debug_backtrace = array();
-		var $console = '';
-		var $show = true;
+		private $data = array();
+		private $debug_backtrace = array();
+		private $console = '';
+		private $show = true;
 
 		function __construct(){
-			// unset($_SESSION['console-hide']);
-			// unset($_SESSION['console-width']);
 			if(!isset($_SESSION['console-hide']))
 				$_SESSION['console-hide'] = 'hide';
 			if(!isset($_SESSION['console-width']))
@@ -20,7 +18,7 @@
 				$_SESSION['console-width'] = $_POST['console-width'];
 		}
 
-		function show($data){
+		public function show($data){
 			$this->debug_backtrace = debug_backtrace();
 			$this->data[] = array(
 				'result' => $data,
@@ -29,19 +27,19 @@
 			);
 		}
 
-		function pre($var){
+		public function pre($var){
 			echo "<pre>";
 			print_r($var);
 			echo "</pre>";
 		}
 
-		function buffer($var){
+		public function buffer($var){
 			ob_start();
 			$this->pre($var);
 			return ob_get_clean();
 		}
 
-		function notShow(){
+		public function notShow(){
 			$this->show = false;
 		}
 
