@@ -1,3 +1,20 @@
+$.fn.toggleAttr = function(attr, value1 = false, value2 = false){
+	return this.each(function(){
+		var self = $(this);
+		if(value1 == false && value2 == false){
+			if(self.hasAttr(attr))
+				self.removeAttr(attr);
+			else
+				self.attr(attr, null);
+		}else{
+			if (self.attr(attr) == value1)
+				self.attr(attr, value2);
+			else
+				self.attr(attr, value1);
+		}
+	});
+};
+
 $(function(){
 
 	var $_nav = {
@@ -19,7 +36,7 @@ $(function(){
 			if(this._reload_css) 
 				setInterval(this.reload_css, 1000);
 
-			this.resize_window();
+			// this.resize_window();
 			this.toggleMenu();
 			this.subMenu();
 		},
@@ -52,8 +69,7 @@ $(function(){
 			this._html.find('#open-menu, #close-menu').click(function(){
 				if($_nav._html.attr('open-nav') == undefined){
 					$_nav._html.attr({'open-nav':1});
-					// if($_nav._window.width() > 500)
-					if((document.location.pathname !== '/' && $_nav._window.width() < 501) || document.location.pathname == '/' && $_nav._window.width() > 500)
+					if($(window).width() > 500)
 						$_nav._menu.css({'top':$_nav._window.scrollTop()});
 					return false;
 				}else{
@@ -84,4 +100,8 @@ $(function(){
 	};
 
 	$_nav.init();
+
+	$('html > body > close-menu').click(function(){
+		$('html').toggleAttr('open-nav');
+	});
 });
