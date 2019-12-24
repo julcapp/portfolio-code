@@ -11,7 +11,7 @@
 			// Возможно нафиг не нужен тут :)
 		}
 
-		function connect($dbuser, $dbpass, $dbname, $dbhost = 'localhost'){
+		public function connect($dbuser, $dbpass, $dbname, $dbhost = 'localhost'){
 			$this->link = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
 			if(!$this->link){
 				// printf("Connect failed: %s\n", mysqli_connect_error());
@@ -21,7 +21,7 @@
 			$this->q("set charset utf8");
 		}
 		
-		function es($var){ // escape_string
+		public function es($var){ // escape_string
 			if(is_array($var)){
 				foreach ($var as $key => $value) {
 					$var[$key] = mysqli_real_escape_string($this->link, $value);
@@ -64,26 +64,26 @@
 			$this->setData($array);
 		}
 
-		function q($query){
+		public function q($query){
 			$this->setQuery($query);
 			$this->getSql();
 		}
 
-		function qf_assoc($query, $return = 0){
+		public function qf_assoc($query, $return = 0){
 			$this->setQuery($query);
 			$this->getSql();
 			$this->getAssoc();
 			if($return) return $this->returnData();
 		}
 
-		function returnData($who = false){
+		public function returnData($who = false){
 			if(!$who)
 				return $this->data;
 			else
 				return $this->data[$who];
 		}
 
-		function qf_array($query, $return = 0){
+		public function qf_array($query, $return = 0){
 			$this->setQuery($query);
 			$this->getSql();
 			$this->getArray();
