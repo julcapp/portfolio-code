@@ -31,6 +31,7 @@
 				die('Файл '.$this->tpl_name.'.tpl не найден');
 			}
 			$this->tpl_data = file_get_contents($tpl_path);
+			$this->set('microtime', functions::getmicrotime());
 			$this->set('THEME', $this->template_url);
 		}
 
