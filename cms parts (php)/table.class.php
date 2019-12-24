@@ -1,28 +1,28 @@
 <?php
 	
 	class DTable{
-		var $_code = '';
-		var $_data = '';
-		var $_name = false;
-		var $_head = '';
-		var $_end = '';
+		private $_code = '';
+		private $_data = '';
+		private $_name = false;
+		private $_head = '';
+		private $_end = '';
 
 		private function cc(){
 			$this->_code = '';
 		}
 
-		function name($name){
+		public function name($name){
 			$this->_name = $name;
 		}
 
-		function head($data = array()){
+		public function head($data = array()){
 			$this->cc();
 			foreach($data as $key => $td)
 				$this->_code .= (is_array($td) ? "<th width='".$td[1]."%'>".$td[0]."</th>" : "<th>".$td."</th>");
 			$this->_head = $this->tr($this->_code, 1);
 		}
 
-		function line($data = array()){
+		public function line($data = array()){
 			$this->cc();
 			foreach($data as $key => $td){
 				// $this->_code .= (is_array($td) ? (is_array($td[0] ? "<td data-".$td[0][0]."='".$td[0][1]."'>".$td[1]."</td>" : "<td data-".$td[0].">".$td[1]."</td>") : "<td>".$td."</td>");
@@ -44,7 +44,7 @@
 			return ($head ? '<tr class="head">'.$code.'</tr>' :'<tr>'.$code.'</tr>');
 		}
 
-		function end(){
+		public function end(){
 			$this->cc();
 			$this->_code = ($this->_name ? "<table id='D' name='".$this->_name."'>" : "<table id='D'>");
 			$this->_code .= $this->_head;
