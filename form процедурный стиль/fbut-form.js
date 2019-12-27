@@ -1,148 +1,177 @@
-jQuery.fn.view = function($val, $name = 'view'){
-	return this.each(function(){
-		$(this).attr($name, $val);
-	});
-};
-
-function p($data, $title = false, $message = ''){
-	if($title !== false)
-		$message += $title+': ';
-	$message += $data;
-	console.log($message);
-}
-
 $(function(){
 
-	$('input[name="Телефон"]').mask('+7 (999) 999-99-99');
+	// $('input[name="Телефон"]').mask('+7 (999) 999-99-99');
 
-	var $fbut = $('fbut-form');	// Главный блок формы.
-	var $fbut_close = $('fbut-close');	// Кнопки закрытия формы.
+	var $_fBut = {
+		_fbut_button_attr: 'data-fbut',
+		_fbut_button_title_attr: 'data-fbut_t',
+		_fbut_tag: 'fbut-form',
+		_fbut_tag_close: 'fbut-close',
+		_fbut_wrap_tag: 'fbut-wrap',
+		_fbut_view_attr: 'data-view',
+		_fbut_opt_close: 'hide',
+		_fbut_opt_open: 'show',
+		_fbut_inputTitle: 'input[name="Заголовок"]',
+		_fbut_inputfile: 'fbut-file input[type="file"]',
+		_fbut_load: 'fbut-load',
+		_fbut_load_class: 'send',
+		_errorText: 'Ошибка по время отправки сообщения.',
+		_fbut_info_tag: 'fbut-info',
+		_fbut_info: null,
 
-	function init_fbut(){	// Запуск отображения формы
-		$fbut.removeAttr('style');
-		p('Форма запущена.', 'fBut');
-	}
+		_ajax: true, // Отправка формы без перезагрузки.
+		_autoHideInfo: true, // Автоматическое закрытие окна с информацией.
+		_autoHideDelay: 10000, // Задержка закрытия окна с информацией.
 
-	function open_fbut($fbut_id, $fbut_t = false){	// Открыть форму и показать конкретную
-		if($fbut_t != false){
-			title_fbut($fbut_id, $fbut_t);
-		}
+		_wrap: null,
+		_forms: null,
+		_form: null,
+		_form_id: null,
 
-		$fbut.view('show');
-		$('fbut-wrap#'+$fbut_id).view('show');
-		p('Форма открыта. [#'+$fbut_id+']', 'fBut');
-	}
+		hideForms: function(){
+			this._forms.attr(this._fbut_view_attr, this._fbut_opt_close);
+		},
+		showForm: function(){
+			this._form.attr(this._fbut_view_attr, this._fbut_opt_open);
+		},
+		setForm: function(){
+			this._form = this._wrap.find(this._fbut_wrap_tag+'#'+this._form_id);
+		},
+		showWrap: function(){
+			this._wrap.attr(this._fbut_view_attr, this._fbut_opt_open);
+		},
+		hideWrap: function(){
+			this.hideForms();
+			this._wrap.attr(this._fbut_view_attr, this._fbut_opt_close);
+		},
+		setFormTitle: function($title){
+			if($title)
+				this._form.find(this._fbut_inputTitle).val($title);
+		},
+		open: function($form_id, $title = false){
+			this._form_id = $form_id;
+			this.hideForms();
+			this.setForm();
+			this.setFormTitle($title);
+			this.showForm();
+			this.showWrap();
+		},
+		changeFile: function($input){
+			let $filename = $input.val().replace(/.*\\/, "");
+			let $files = $input.prop('files');
+			let $filesName = "";
+			if($files.length == 0){
+				$filesName = $input.siblings('span').attr("placeholder");
+			}else{
+				if($files.length > 1)
+					$input.siblings('span').attr({'count':$files.length});
 
-	function close_fbut(){	// Закрыть форму
-		$fbut.view('hide');
-		$('fbut-wrap[view="show"]').view('hide');
-		p('Форма закрыта.', 'fBut');
-	}
-
-	function fbut_file($fbut_file){
-		var $filename = $fbut_file.val().replace(/.*\\/, "");
-		var $files = $fbut_file.prop('files');
-		var $filesName = "";
-
-		if($files.length == 0){
-			$filesName = $fbut_file.siblings('span').attr("placeholder");
-		}else{
-			if($files.length > 1){
-				p('Выбрано '+$files.length+' файла', 'fbut');
-				$fbut_file.siblings('span').attr({'count':$files.length});
+				for(i = 0; i < $files.length; i++){
+					if(i != 0) $filesName += ", ";
+					$filesName += $files[i].name;
+				}	
 			}
-
-			for(i = 0; i < $files.length; i++){
-				if(i != 0) $filesName += ", ";
-				$filesName += $files[i].name;		
-			}	
-		}
-		
-		$fbut_file.siblings('span').text($filesName);
-	}
-
-	function title_fbut(fbut_id, $fbut_t){
-		$('fbut-wrap#'+$fbut_id+' input[name="Заголовок"]').val($fbut_t);
-		p('Установлен заголовок "'+$fbut_t+'" [#'+$fbut_id+']', 'fbut');
-	}
-
-	$('fbut-file input[type="file"]').change(function(){
-		fbut_file($(this));
-	});
-
-
-	init_fbut();	// Запускаем отображение формы.
-
-	$fbut_close.click(function(){
-		close_fbut();
-	});
-
-	$('[fbut]').click(function(){
-		$fbut_id = $(this).attr('fbut');
-		$fbut_t = $(this).attr('fbut_t');
-		
-		if($fbut_t == undefined)
-			$fbut_t = false;
-
-		open_fbut($fbut_id, $fbut_t);
-		return false;
-	});
-
-
-	//////////////// ################ АЯКС ФОРМА ################ ////////////////
-
-	function load_fbut(){
-		$('fbut-load').toggleClass('send');
-		p('Анимация отправки данных.', 'fBut');
-	}
-
-	function info_fbut($data){
-		for($exit = 0; $exit != 1;){
-			if($data.indexOf('\n') + 1)
-				$data = $data.replace("\n", "<br>");
-			else
-				$exit = 1;
-		}
-
-		$("fbut-info > div").html($data);
-		$('fbut-info').view('show');
-		setTimeout(function(){
-			$('fbut-info').view('hide');
-		}, 5000);
-	}
-
-	$('fbut-form  > fbut-wrap > form[ajax]').on('submit', function(e){
-		$('fbut-wrap[view="show"]').view('hide');
-		e.preventDefault();
-		var $that = $(this),
-		formData = new FormData($that.get(0));
-		$.ajax({
-			url: '/mail/index.php',
-			type: 'POST',
-			dataType: 'text',
-			contentType: false,
-			processData: false,
-			data: formData,
-			beforeSend: function(){
-				load_fbut();
-			},
-			error: function(req, text, error){
-				console.error('Упс! Ошибочка: ' + text + ' | ' + error);
-				console.log('error');
-			},
-			complete: function(){
-				load_fbut();
-				close_fbut();
-			},
-			success: function(json){
-				if(json){
-					info_fbut(json);
+			$input.siblings('span').text($filesName);
+		},
+		load_anim: function(){
+			this._fbut_load.toggleClass(this._fbut_load_class);
+		},
+		infoText: function($text){
+			this._fbut_info.find('div').text($text);
+		},
+		showInfo: function(){
+			this._fbut_info.attr(this._fbut_view_attr, this._fbut_opt_open);
+			if(this._autoHideInfo)
+				setTimeout(function(){
+					$self.hideInfo();
+				}, this._autoHideDelay);
+		},
+		hideInfo: function(){
+			this._fbut_info.attr(this._fbut_view_attr, this._fbut_opt_close);
+		},
+		sendForm: function($form){
+			let $f = $($form);
+			$.ajax({
+				url: $f.attr('action'),
+				type: 'POST',
+				dataType: 'text',
+				contentType: false,
+				processData: false,
+				data: new FormData($form),
+				beforeSend: function(){
+					$self.load_anim(); // Запуск функции лоадера
+				},
+				error: function(req, text, error){
+					$self.infoText($self._errorText+text + ' | ' + error)
+				},
+				complete: function(){
+					$self.hideWrap();
+					$self.load_anim(); // Окончание функции лоадера
+					$self.showInfo();
+				},
+				success: function($answer){
+					$self.infoText($answer)
 				}
-			}
-		});
-		$(this).trigger("reset");
-	});
+			}).done(function(){
+				$($form).trigger("reset");
+			});
 
-	//////////////// ################ АЯКС ФОРМА ################ ////////////////
-	
+		},
+
+		////// EVENTS //////
+		e_buttonForOpen: function(){
+			$(document).on('click', '['+this._fbut_button_attr+']', function(){
+				let $but = $(this);
+				let $form_id = $but.attr($self._fbut_button_attr);
+				let $title = $but.attr($self._fbut_button_title_attr);
+				$self.open($form_id, $title);
+			});
+		},
+		e_buttonForClose: function(){
+			$(document).on('click', this._fbut_tag_close, function(){
+				$self.hideWrap();
+			});
+		},
+		e_changeFile: function(){
+			$(document).on('change', this._fbut_inputfile, function(){
+				$self.changeFile($(this));
+			});
+		},
+		e_submitForm: function(){
+			$(document).on('submit', this._fbut_wrap_tag+' form', function(event){
+				if($self._ajax){
+					event.preventDefault();
+					$self.sendForm(this);
+					// return false;
+				}else{
+
+				}
+			});
+		},
+		e_close_info: function(){
+			$(document).on('click', this._fbut_info_tag, function(){
+				$self.hideInfo();
+			});
+		},
+		setEvents: function(){
+			$self = this;
+			this.e_buttonForOpen();
+			this.e_buttonForClose();
+			this.e_changeFile();
+			this.e_submitForm();
+			this.e_close_info();
+		},
+		////// EVENTS //////
+
+		init: function(){
+			this._wrap = $(this._fbut_tag);
+			this._fbut_load = this._wrap.find(this._fbut_load);
+			this._fbut_info = this._wrap.siblings(this._fbut_info_tag);
+			this._forms = this._wrap.find(this._fbut_wrap_tag);
+			this.setEvents();
+		}
+	};
+
+	$_fBut.init();
+
 });
